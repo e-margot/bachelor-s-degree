@@ -123,8 +123,13 @@
 </tr>
 </table>
 
-<h2>Эксперименты<h2/>
-<center>График зависимости accuracy от learning rate</center>
+<h2>Эксперименты</h2>
+<img src="photo_2022-11-02_09-35-52.jpg" alt="Accuracy/learning_rate"/>
+<center>График зависимости accuracy от learning rate, где </center>
+<br>Синий график - learning rate 1e-3
+<br>Жёлтый график - learning rate 1e-5
+<br>Зелёный график - learning rate 1e-4
+<br>Красный график - learning rate 1e-2
 
 
 ## Системные требования
