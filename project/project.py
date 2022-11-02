@@ -39,6 +39,9 @@ from matplotlib.patches import Polygon
 import copy
 import itertools
 import argparse
+import seaborn as sns
+import pandas as pd
+from operator import truediv
 # import pycocotools._mask as maskUtils
 from collections import defaultdict
 import sys
@@ -597,6 +600,39 @@ def accuracy(outputs, labels):
     # print(preds)
     # print(targs)
     return torch.tensor(torch.sum(preds == targs).item() / len(preds))
+
+
+def confusion_matrix(outputs, labels):
+    nb_classes = 15
+    confusion_matrix = torch.zeros(nb_classes, nb_classes)
+    _, preds = torch.max(outputs, dim=1)
+    _, targs = torch.max(labels, dim=1)
+    for t, p in zip(targs.view(-1), preds.view(-1)):
+        confusion_matrix[t.long(), p.long()] += 1
+    # print(preds)
+    # print(targs)
+    return confusion_matrix
+
+
+def plot_confusion(conf_matrix):
+
+    fig, ax = plt.subplots(1, 2, figsize=(17, 7))
+    # target_names = ["MEL", "NV", "BCC", "AKIEC", "BKL", "DF", "VASC"]
+    # df = pd.DataFrame(conf_matrix, columns=)
+    ax[0] = sns.heatmap(conf_matrix, annot=True, linewidths=.5,
+                        ax=ax[0])
+    print("accuracy:", np.sum(np.diag(conf_matrix)) / np.sum(conf_matrix))
+    fig.show()
+
+    cmn = conf_matrix.astype('float') / conf_matrix.sum(axis=1)[:, np.newaxis]
+    ax[1] = sns.heatmap(cmn, annot=True, linewidths=.5,
+                        ax=ax[1])
+    fig.show()
+
+    tp = np.diag(conf_matrix)
+    prec = list(map(truediv, tp, np.sum(conf_matrix, axis=0)))
+    rec = list(map(truediv, tp, np.sum(conf_matrix, axis=1)))
+    print('Precision: {}\nRecall: {}'.format(prec, rec))
 
 
 class ImageClassificationBase(nn.Module):
