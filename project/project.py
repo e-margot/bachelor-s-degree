@@ -652,7 +652,8 @@ class ImageClassificationBase(nn.Module):
         # print (out, out.size())
         loss = F.cross_entropy(out, labels1)   # Calculate loss
         acc = accuracy(out, labels)           # Calculate accuracy
-      
+        conf_matrix = confusion_matrix(out, labels) #  create beautiful maps.... maybe
+        plot_confusion(conf_matrix)
         return {'val_loss': loss.detach(), 'val_acc': acc}
         
     def validation_epoch_end(self, outputs):
