@@ -37,14 +37,14 @@ class AugMyCocoDetection(VisionDataset):
         self.ids = list(sorted(self.coco.imgs.keys()))
 
     def _load_image(self, id: int) -> Image.Image:
-        path = self.coco.loadImgs(id)[0]["file_name"]
+        path = self.coco.load_imgs(id)[0]["file_name"]
         image = Image.open(os.path.join(self.root, os.path.basename(path))).convert('L').resize((256, 256))
         im_aug = torchvision.transforms.RandomInvert(p=0.67)(image)
         im_aug = torchvision.transforms.functional.adjust_sharpness(im_aug, 10)
         return im_aug
 
     def _load_target(self, id: int):
-        return self.coco.loadAnns(self.coco.getAnnIds(id))
+        return self.coco.load_anns(self.coco.get_ann_ids(id))
 
     def __getitem__(self, index: int) -> Tuple[Any, Any]:
         id = self.ids[index]
@@ -58,6 +58,6 @@ class AugMyCocoDetection(VisionDataset):
         return len(self.ids)
 
     def printf(self, id):
-        path = self.coco.loadImgs(id)[0]["file_name"]
+        path = self.coco.load_imgs(id)[0]["file_name"]
         im = Image.open(os.path.join(self.root, os.path.basename(path))).convert('L').resize((256, 256))
         im_aug = torchvision.transforms.functional.adjust_sharpness(im, 15)

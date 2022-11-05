@@ -13,7 +13,7 @@ elif PYTHON_VERSION == 3:
     from urllib.request import urlretrieve
 
 
-def _isArrayLike(obj):
+def _is_array_like(obj):
     return hasattr(obj, '__iter__') and hasattr(obj, '__len__')
 
 
@@ -30,24 +30,24 @@ class MyCOCO:
         """
         # load dataset
         self.dataset, self.anns, self.cats, self.imgs = dict(), dict(), dict(), dict()
-        self.imgToAnns, self.catToImgs = defaultdict(list), defaultdict(list)
-        if not annotation_file == None:
+        self.img_to_anns, self.cat_to_imgs = defaultdict(list), defaultdict(list)
+        if annotation_file:
             print('loading annotations into memory...')
             tic = time.time()
             dataset = json.load(open(annotation_file, 'r'))
             assert type(dataset) == dict, 'annotation file format {} not supported'.format(type(dataset))
             print('Done (t={:0.2f}s)'.format(time.time() - tic))
             self.dataset = dataset
-            self.createIndex()
+            self.create_index()
 
-    def createIndex(self):
+    def create_index(self):
         # create index
         print('creating index...')
         anns, cats, imgs = {}, {}, {}
-        imgToAnns, catToImgs = defaultdict(list), defaultdict(list)
+        img_to_anns, cat_to_imgs = defaultdict(list), defaultdict(list)
         if 'annotations' in self.dataset:
             for ann in self.dataset['annotations']:
-                imgToAnns[ann['id']].append(ann)
+                img_to_anns[ann['id']].append(ann)
                 anns[ann['id']] = ann
                 imgs[ann['id']] = ann
 
@@ -57,84 +57,84 @@ class MyCOCO:
 
         if 'annotations' in self.dataset and 'categories' in self.dataset:
             for ann in self.dataset['annotations']:
-                catToImgs[ann['category_id']].append(ann['id'])
+                cat_to_imgs[ann['category_id']].append(ann['id'])
 
         print('index created!')
 
         # create class members
         self.anns = anns
-        self.imgToAnns = imgToAnns
-        self.catToImgs = catToImgs
+        self.img_to_anns = img_to_anns
+        self.cat_to_imgs = cat_to_imgs
         self.imgs = imgs
         self.cats = cats
 
-    def getAnnIds(self, imgIds=[], catIds=[], areaRng=[], iscrowd=None):
+    def get_ann_ids(self, img_ids=[], cat_ids=[], areaRng=[], iscrowd=None):
         """
         Get ann ids that satisfy given filter conditions. default skips that filter
-        :param imgIds  (int array)     : get anns for given imgs
-               catIds  (int array)     : get anns for given cats
+        :param img_ids  (int array)     : get anns for given imgs
+               cat_ids  (int array)     : get anns for given cats
                areaRng (float array)   : get anns for given area range (e.g. [0 inf])
                iscrowd (boolean)       : get anns for given crowd label (False or True)
         :return: ids (int array)       : integer array of ann ids
         """
-        imgIds = imgIds if _isArrayLike(imgIds) else [imgIds]
-        catIds = catIds if _isArrayLike(catIds) else [catIds]
+        img_ids = img_ids if _is_array_like(img_ids) else [img_ids]
+        cat_ids = cat_ids if _is_array_like(cat_ids) else [cat_ids]
 
-        if len(imgIds) == len(catIds) == 0:
+        if len(img_ids) == len(cat_ids) == 0:
             anns = self.dataset['annotations']
         else:
-            if not len(imgIds) == 0:
-                lists = [self.imgToAnns[imgId] for imgId in imgIds if imgId in self.imgToAnns]
+            if not len(img_ids) == 0:
+                lists = [self.img_to_anns[imgId] for imgId in img_ids if imgId in self.img_to_anns]
                 anns = list(itertools.chain.from_iterable(lists))
             else:
                 anns = self.dataset['annotations']
-            anns = anns if len(catIds) == 0 else [ann for ann in anns if ann['category_id'] in catIds]
+            anns = anns if len(cat_ids) == 0 else [ann for ann in anns if ann['category_id'] in cat_ids]
         if not iscrowd == None:
             ids = [ann['id'] for ann in anns if ann['iscrowd'] == iscrowd]
         else:
             ids = [ann['id'] for ann in anns]
         return ids
 
-    def getCatIds(self, catNms=[], supNms=[], catIds=[]):
+    def get_cat_ids(self, catNms=[], supNms=[], cat_ids=[]):
         """
         filtering parameters. default skips that filter.
         :param catNms (str array)  : get cats for given cat names
         :param supNms (str array)  : get cats for given supercategory names
-        :param catIds (int array)  : get cats for given cat ids
+        :param cat_ids (int array)  : get cats for given cat ids
         :return: ids (int array)   : integer array of cat ids
         """
-        catNms = catNms if _isArrayLike(catNms) else [catNms]
+        catNms = catNms if _is_array_like(catNms) else [catNms]
         # supNms = supNms if _isArrayLike(supNms) else [supNms]
-        catIds = catIds if _isArrayLike(catIds) else [catIds]
+        cat_ids = cat_ids if _is_array_like(cat_ids) else [cat_ids]
 
-        if len(catNms) == len(catIds) == 0:
+        if len(catNms) == len(cat_ids) == 0:
             cats = self.dataset['categories']
         else:
             cats = self.dataset['categories']
             cats = cats if len(catNms) == 0 else [cat for cat in cats if cat['name'] in catNms]
-            cats = cats if len(catIds) == 0 else [cat for cat in cats if cat['id'] in catIds]
+            cats = cats if len(cat_ids) == 0 else [cat for cat in cats if cat['id'] in cat_ids]
         ids = [cat['id'] for cat in cats]
         return ids
 
-    def getImgIds(self, imgIds=[], catIds=[]):
-        '''
+    def get_img_ids(self, img_ids=[], cat_ids=[]):
+        """
         Get img ids that satisfy given filter conditions.
-        :param imgIds (int array) : get imgs for given ids
-        :param catIds (int array) : get imgs with all given cats
+        :param img_ids (int array) : get imgs for given ids
+        :param cat_ids (int array) : get imgs with all given cats
         :return: ids (int array)  : integer array of img ids
-        '''
-        imgIds = imgIds if _isArrayLike(imgIds) else [imgIds]
-        catIds = catIds if _isArrayLike(catIds) else [catIds]
+        """
+        img_ids = img_ids if _is_array_like(img_ids) else [img_ids]
+        cat_ids = cat_ids if _is_array_like(cat_ids) else [cat_ids]
 
-        if len(imgIds) == len(catIds) == 0:
+        if len(img_ids) == len(cat_ids) == 0:
             ids = self.imgs.keys()
         else:
-            ids = set(imgIds)
-            for i, catId in enumerate(catIds):
+            ids = set(img_ids)
+            for i, cat_id in enumerate(cat_ids):
                 if i == 0 and len(ids) == 0:
-                    ids = set(self.catToImgs[catId])
+                    ids = set(self.cat_to_imgs[cat_id])
                 else:
-                    ids &= set(self.catToImgs[catId])
+                    ids &= set(self.cat_to_imgs[cat_id])
         return list(ids)
 
     def cls(self, ids=[]):
@@ -143,64 +143,64 @@ class MyCOCO:
         target[a[0] - 1] = 1
         return target
 
-    def loadAnns(self, ids=[]):
+    def load_anns(self, ids=[]):
         """
         Load anns with the specified ids.
         :param ids (int array)       : integer ids specifying anns
         :return: anns (object array) : loaded ann objects
         """
-        if _isArrayLike(ids):
+        if _is_array_like(ids):
             return self.cls(ids)
         elif type(ids) == int:
             return [self.anns[ids]]
 
-    def loadCats(self, ids=[]):
+    def load_cats(self, ids=[]):
         """
         Load cats with the specified ids.
         :param ids (int array)       : integer ids specifying cats
         :return: cats (object array) : loaded cat objects
         """
-        if _isArrayLike(ids):
+        if _is_array_like(ids):
             return [self.cats[id] for id in ids]
         elif type(ids) == int:
             return [self.cats[ids]]
 
-    def loadImgs(self, ids=[]):
+    def load_imgs(self, ids=[]):
         """
         Load anns with the specified ids.
         :param ids (int array)       : integer ids specifying img
         :return: imgs (object array) : loaded img objects
         """
-        if _isArrayLike(ids):
+        if _is_array_like(ids):
             return [self.imgs[id] for id in ids]
         elif type(ids) == int:
             return [self.imgs[ids]]
 
-    def download(self, tarDir=None, imgIds=[]):
-        '''
+    def download(self, tar_dir=None, img_ids=[]):
+        """
         Download COCO images from mscoco.org server.
-        :param tarDir (str): COCO results directory name
-               imgIds (list): images to be downloaded
+        :param tar_dir (str): COCO results directory name
+               img_ids (list): images to be downloaded
         :return:
-        '''
-        if tarDir is None:
+        """
+        if tar_dir is None:
             print('Please specify target directory')
             return -1
-        if len(imgIds) == 0:
+        if len(img_ids) == 0:
             imgs = self.imgs.values()
         else:
-            imgs = self.loadImgs(imgIds)
+            imgs = self.load_imgs(img_ids)
         N = len(imgs)
-        if not os.path.exists(tarDir):
-            os.makedirs(tarDir)
+        if not os.path.exists(tar_dir):
+            os.makedirs(tar_dir)
         for i, img in enumerate(imgs):
             tic = time.time()
-            fname = os.path.join(tarDir, img['file_name'])
-            if not os.path.exists(fname):
-                urlretrieve(img['coco_url'], fname)
+            file_name = os.path.join(tar_dir, img['file_name'])
+            if not os.path.exists(file_name):
+                urlretrieve(img['coco_url'], file_name)
             print('downloaded {}/{} images (t={:0.1f}s)'.format(i, N, time.time() - tic))
 
-    def loadNumpyAnnotations(self, data):
+    def load_numpy_annotations(self, data):
         """
         Convert result data from a numpy array [Nx7] where each row contains {imageID,x1,y1,w,h,score,class}
         :param  data (numpy.ndarray)
