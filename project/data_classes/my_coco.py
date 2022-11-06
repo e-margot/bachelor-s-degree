@@ -68,12 +68,11 @@ class MyCOCO:
         self.imgs = imgs
         self.cats = cats
 
-    def get_ann_ids(self, img_ids=[], cat_ids=[], areaRng=[], iscrowd=None):
+    def get_ann_ids(self, img_ids=[], cat_ids=[], iscrowd=None):
         """
         Get ann ids that satisfy given filter conditions. default skips that filter
         :param img_ids  (int array)     : get anns for given imgs
                cat_ids  (int array)     : get anns for given cats
-               areaRng (float array)   : get anns for given area range (e.g. [0 inf])
                iscrowd (boolean)       : get anns for given crowd label (False or True)
         :return: ids (int array)       : integer array of ann ids
         """
@@ -95,23 +94,21 @@ class MyCOCO:
             ids = [ann['id'] for ann in anns]
         return ids
 
-    def get_cat_ids(self, catNms=[], supNms=[], cat_ids=[]):
+    def get_cat_ids(self, cat_nms=[], cat_ids=[]):
         """
         filtering parameters. default skips that filter.
-        :param catNms (str array)  : get cats for given cat names
-        :param supNms (str array)  : get cats for given supercategory names
+        :param cat_nms (str array)  : get cats for given cat names
         :param cat_ids (int array)  : get cats for given cat ids
         :return: ids (int array)   : integer array of cat ids
         """
-        catNms = catNms if _is_array_like(catNms) else [catNms]
-        # supNms = supNms if _isArrayLike(supNms) else [supNms]
+        cat_nms = cat_nms if _is_array_like(cat_nms) else [cat_nms]
         cat_ids = cat_ids if _is_array_like(cat_ids) else [cat_ids]
 
-        if len(catNms) == len(cat_ids) == 0:
+        if len(cat_nms) == len(cat_ids) == 0:
             cats = self.dataset['categories']
         else:
             cats = self.dataset['categories']
-            cats = cats if len(catNms) == 0 else [cat for cat in cats if cat['name'] in catNms]
+            cats = cats if len(cat_nms) == 0 else [cat for cat in cats if cat['name'] in cat_nms]
             cats = cats if len(cat_ids) == 0 else [cat for cat in cats if cat['id'] in cat_ids]
         ids = [cat['id'] for cat in cats]
         return ids
@@ -190,7 +187,6 @@ class MyCOCO:
             imgs = self.imgs.values()
         else:
             imgs = self.load_imgs(img_ids)
-        N = len(imgs)
         if not os.path.exists(tar_dir):
             os.makedirs(tar_dir)
         for i, img in enumerate(imgs):
@@ -198,7 +194,7 @@ class MyCOCO:
             file_name = os.path.join(tar_dir, img['file_name'])
             if not os.path.exists(file_name):
                 urlretrieve(img['coco_url'], file_name)
-            print('downloaded {}/{} images (t={:0.1f}s)'.format(i, N, time.time() - tic))
+            print('downloaded {}/{} images (t={:0.1f}s)'.format(i, len(imgs), time.time() - tic))
 
     def load_numpy_annotations(self, data):
         """

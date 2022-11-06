@@ -1,11 +1,11 @@
 import os
 
 from torchvision.datasets.vision import VisionDataset
-from typing import Any, Callable, Optional, Tuple, List
+from typing import Any, Callable, Optional, Tuple
 import torchvision
 from PIL import Image
 import torch
-from my_coco import MyCOCO
+from project.data_classes.my_coco import MyCOCO
 
 
 class AugMyCocoDetection(VisionDataset):
@@ -15,7 +15,7 @@ class AugMyCocoDetection(VisionDataset):
 
     Args:
         root (string): Root directory where images are downloaded to.
-        annFile (string): Path to json annotation file.
+        ann_file (string): Path to json annotation file.
         transform (callable, optional): A function/transform that  takes in an PIL image
             and returns a transformed version. E.g, ``transforms.ToTensor``
         target_transform (callable, optional): A function/transform that takes in the
@@ -27,13 +27,13 @@ class AugMyCocoDetection(VisionDataset):
     def __init__(
             self,
             root: str,
-            annFile: str,
+            ann_file: str,
             transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             transforms: Optional[Callable] = None,
     ) -> None:
         super().__init__(root, transforms, transform, target_transform)
-        self.coco = MyCOCO(annFile)
+        self.coco = MyCOCO(ann_file)
         self.ids = list(sorted(self.coco.imgs.keys()))
 
     def _load_image(self, id: int) -> Image.Image:

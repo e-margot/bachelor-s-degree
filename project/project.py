@@ -11,25 +11,22 @@ Original file is located at
 
 # Commented out IPython magic to ensure Python compatibility.
 import torch
-from torchvision.transforms import ToTensor, PILToTensor, ConvertImageDtype, Compose
+from torchvision.transforms import PILToTensor, ConvertImageDtype, Compose
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import argparse
 
-from my_coco_collection import MyCocoDetection
-from resnet import ResNet, BasicBlock
-from image_classificaton_base import ImageClassificationBase
-from augmentate_coco import AugMyCocoDetection
+from project.data_classes.my_coco_collection import MyCocoDetection
+from project.data_classes.device_data_loader import DeviceDataLoader
+from project.model_classes.flir_resnet import FLIR80Resnet
+from project.model_classes.resnet import ResNet, BasicBlock
+from project.model_classes.image_classificaton_base import ImageClassificationBase
+from project.data_classes.augmentate_coco import AugMyCocoDetection
+import config
 """# Override Resnet34
 https://www.kaggle.com/code/poonaml/building-resnet34-from-scratch-using-pytorch/notebook
 """
-
-
-def resnet34():
-    layers = [2, 2, 2, 2]
-    model_instance = ResNet(BasicBlock, layers)
-    return model_instance
 
 
 def get_default_device():
@@ -38,41 +35,6 @@ def get_default_device():
         return torch.device('cuda')
     else:
         return torch.device('cpu')
-
-
-def to_device(data, device):
-    """Move tensor(s) to chosen device"""
-    if isinstance(data, (list, tuple)):
-        return [to_device(x, device) for x in data]
-    return data.to(device, non_blocking=True)
-
-
-class DeviceDataLoader:
-    """Wrap a dataloader to move data to a device"""
-
-    def __init__(self, dl, device):
-        self.dl = dl
-        self.device = device
-
-    def __iter__(self):
-        """Yield a batch of data after moving it to device"""
-        for b in self.dl:
-            yield to_device(b, self.device)
-
-    def __len__(self):
-        """Number of batches"""
-        return len(self.dl)
-
-
-class FLIR80Resnet(ImageClassificationBase):
-    def __init__(self):
-        super().__init__()
-        self.network = resnet34()
-        num_ftrs = self.network.fc.in_features
-        self.network.fc = nn.Linear(num_ftrs, 80)
-
-    def forward(self, xb):
-        return self.network(xb)
 
 
 @torch.no_grad()
@@ -117,8 +79,6 @@ def plot_accuracies(acc_history, file_name):
     plt.savefig(file_name)
 
 
-#
-
 def plot_losses(loss_history, file_name):
     train_losses = [x.get('train_loss') for x in loss_history]
     val_losses = [x['val_loss'] for x in loss_history]
@@ -147,30 +107,29 @@ if __name__ == "__main__":
     parser.add_argument('-e', dest='epoch', type=int, default=10, help='Enter number of epoch')
     args = parser.parse_args()
 
-    """# Download dataset"""
+    # Download dataset
 
     transform_rgb = Compose([PILToTensor(),
                              ConvertImageDtype(torch.float),
-
                              ])
     transform_thermal = Compose([PILToTensor(),
                                  ConvertImageDtype(torch.float)
                                  ])
 
-    batch_size = 64
+    batch_size = config.BATCH_SIZE
 
-    """TV"""
+    # TV
 
-    path2data = "my_FLIR_ADAS_v2/images_rgb_train/new_data"
-    path2json = "my_FLIR_ADAS_v2/images_rgb_train/ann.json"
+    path2data = config.TV_PATH_TO_DATA
+    path2json = config.TV_PATH_TO_JSON
 
     coco_TV = AugMyCocoDetection(path2data, path2json, transform=transform_rgb)
     coco_loader_TV = DataLoader(coco_TV, batch_size, shuffle=True, num_workers=0, pin_memory=True)
 
-    """NIR"""
+    # NIR
 
-    path2data = "my_FLIR_ADAS_v2/images_thermal_val/new_data"
-    path2json = "my_FLIR_ADAS_v2/images_thermal_val/ann.json"
+    path2data = config.NIR_PATH_TO_DATA
+    path2json = config.NIR_PATH_TO_JSON
 
     coco_NIR = MyCocoDetection(path2data, path2json, transform=transform_thermal)
     coco_loader_NIR = DataLoader(coco_NIR, batch_size, shuffle=True, num_workers=0, pin_memory=True)
@@ -181,11 +140,9 @@ if __name__ == "__main__":
     coco_loader_NIR = DeviceDataLoader(coco_loader_NIR, device)
     coco_loader_TV = DeviceDataLoader(coco_loader_TV, device)
 
-    resnet34_debug = resnet34()
-
     model = FLIR80Resnet()
 
-    model = model.to('cuda')
+    model = model.to(device)
 
     # For this model we gonna use Adam Optimization
     opt_func = torch.optim.Adam
@@ -202,7 +159,7 @@ if __name__ == "__main__":
         5: [25, 1e-5, model, train_dl, valid_dl, 5e-4, opt_func]
     }
 
-    INDEX = 3
+    INDEX = config.RUN_RULE_SET
 
     history = fit(*training_cycles[INDEX])
     plot_accuracies(history, accuracy_names[INDEX])

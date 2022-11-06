@@ -18,8 +18,8 @@ class ImageClassificationBase(nn.Module):
     def validation_step(self, batch):
         images, labels = batch
         out = self(images)  # Generate predictions
-        labels1 = labels.softmax(dim=1)
-        loss = F.cross_entropy(out, labels1)  # Calculate loss
+        temp_labels = labels.softmax(dim=1)
+        loss = F.cross_entropy(out, temp_labels)  # Calculate loss
         acc = accuracy(out, labels)  # Calculate accuracy
         conf_matrix = confusion_matrix(out, labels)  # create beautiful maps.... maybe
         plot_confusion(conf_matrix)
@@ -45,12 +45,12 @@ def accuracy(outputs, labels):
 
 def confusion_matrix(outputs, labels):
     nb_classes = 15
-    confusion_matrix = torch.zeros(nb_classes, nb_classes)
+    matrix = torch.zeros(nb_classes, nb_classes)
     _, preds = torch.max(outputs, dim=1)
     _, targs = torch.max(labels, dim=1)
     for t, p in zip(targs.view(-1), preds.view(-1)):
-        confusion_matrix[t.long(), p.long()] += 1
-    return confusion_matrix
+        matrix[t.long(), p.long()] += 1
+    return matrix
 
 
 def plot_confusion(conf_matrix):
