@@ -24,10 +24,7 @@ from project.model_classes.resnet import ResNet, BasicBlock
 from project.model_classes.image_classificaton_base import ImageClassificationBase
 from project.data_classes.augmentate_coco import AugMyCocoDetection
 import config
-"""# Override Resnet34
-https://www.kaggle.com/code/poonaml/building-resnet34-from-scratch-using-pytorch/notebook
-"""
-
+from loguru import logger
 
 def get_default_device():
     """Pick GPU if available, else CPU"""
@@ -49,9 +46,13 @@ def evaluate(this_model, val_loader):
 def fit(epochs, lr, this_model, train_loader, val_loader,
         weight_decay=0, this_opt_func=torch.optim.SGD):
     loss_history = []
+    logger.info("Upload model weights")
     this_model.load_state_dict(torch.load('weights/model.pth'))
     optimizer = this_opt_func(this_model.parameters(), lr, weight_decay=weight_decay)
+    logger.info("Start training cycle")
+
     for epoch in range(epochs):
+        logger.info(f"Running {epoch} epoch")
         # Training Phase 
         this_model.train()
         train_losses = []
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Download dataset
-
+    logger.info("Preparing data")
     transform_rgb = Compose([PILToTensor(),
                              ConvertImageDtype(torch.float),
                              ])
@@ -135,10 +136,12 @@ if __name__ == "__main__":
     coco_loader_NIR = DataLoader(coco_NIR, batch_size, shuffle=True, num_workers=0, pin_memory=True)
 
     device = get_default_device()
-    print(device)
+    logger.info(f"Using device:{device}")
 
     coco_loader_NIR = DeviceDataLoader(coco_loader_NIR, device)
     coco_loader_TV = DeviceDataLoader(coco_loader_TV, device)
+    logger.info("DataLoaders is ready")
+    logger.info("Creating model")
 
     model = FLIR80Resnet()
 
@@ -160,7 +163,7 @@ if __name__ == "__main__":
     }
 
     INDEX = config.RUN_RULE_SET
-
+    logger.info(f"Using rule set {config.RUN_RULE_SET}")
     history = fit(*training_cycles[INDEX])
     plot_accuracies(history, accuracy_names[INDEX])
     plot_losses(history, losses_names[INDEX])

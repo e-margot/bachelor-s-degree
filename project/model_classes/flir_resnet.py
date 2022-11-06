@@ -1,6 +1,9 @@
 from project.model_classes.image_classificaton_base import ImageClassificationBase
 from project.model_classes.resnet import ResNet, BasicBlock
 import torch.nn as nn
+"""# Override Resnet34
+https://www.kaggle.com/code/poonaml/building-resnet34-from-scratch-using-pytorch/notebook
+"""
 
 
 def resnet34():
