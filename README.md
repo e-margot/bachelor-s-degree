@@ -141,3 +141,56 @@
 ## Оценка решения
 
 Модель показала хорошую работу на тестовых данных. В дальнейшем можно попробовать запустить на данных другие версии ResNet.
+
+## Precision и recall
+<table>
+<tr>
+<th>Номер класса/Метрики</th><th>Precision</th><th>Recall</th>
+</tr>
+<tr>
+<th>0</th><th>0.4756</th><th>0.3792</th>
+</tr>
+<tr>
+<th>1</th><th>0.0348</th><th>0.4765</th>
+</tr>
+<tr>
+<th>2</th><th>0.6993</th><th>0.8697</th>
+</tr>
+<tr>
+<th>3</th><th>0.</th><th>0.</th>
+</tr>
+<tr>
+<th>4</th><th>nan</th><th>0.</th>
+</tr>
+<tr>
+<th>5</th><th>nan</th><th>nan</th>
+</tr>
+<tr>
+<th>6</th><th>0.</th><th>0.</th>
+</tr>
+<tr>
+<th>7</th><th>0.7375</th><th>0.3082</th>
+</tr>
+<tr>
+<th>8</th><th>0.1067</th><th>0.0851</th>
+</tr>
+<tr>
+<th>9</th><th>0.7864</th><th>0.2994</th>
+</tr>
+<tr>
+<th>10</th><th>nan</th><th>nan</th>
+</tr>
+<tr>
+<th>11</th><th>0.</th><th>0.</th>
+</tr>
+<tr>
+<th>12</th><th>nan</th><th>0.</th>
+</tr>
+<tr>
+<th>13</th><th>nan</th><th>nan</th>
+</tr>
+<tr>
+<th>14</th><th>0.</th><th>0.</th>
+</tr>
+</table>
+
