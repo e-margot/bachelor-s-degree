@@ -17,7 +17,7 @@ class FLIR80Resnet(ImageClassificationBase):
         super().__init__()
         self.network = resnet34()
         num_ftrs = self.network.fc.in_features
-        self.network.fc = nn.Linear(num_ftrs, 80)
+        self.network.fc = nn.Linear(num_ftrs, 15)
 
     def forward(self, xb):
         return self.network(xb)
