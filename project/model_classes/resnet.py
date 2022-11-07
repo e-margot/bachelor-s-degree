@@ -52,7 +52,7 @@ def _make_layer(block, inplanes, planes, blocks, stride=1):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=80):
+    def __init__(self, block, layers, num_classes=15):
         super().__init__()
 
         self.inplanes = 64
