@@ -143,54 +143,54 @@
 Модель показала хорошую работу на тестовых данных. В дальнейшем можно попробовать запустить на данных другие версии ResNet.
 
 ## Precision и recall
-<table>
+<table align="center">
 <tr>
-<th>Номер класса/Метрики</th><th>Precision</th><th>Recall</th>
+<th>Название класс</th><th>Количество объектов</th><th>Precision</th><th>Recall</th>
 </tr>
 <tr>
-<th>0</th><th>0.4756</th><th>0.3792</th>
+<th>person</th><td>50478</td><td>0.4756</td><td>0.3792</td>
 </tr>
 <tr>
-<th>1</th><th>0.0348</th><th>0.4765</th>
+<th>bike</th><td>7237</td><td>0.0348</td><td>0.4765</td>
 </tr>
 <tr>
-<th>2</th><th>0.6993</th><th>0.8697</th>
+<th>car</th><td>73623</td><td>0.6993</td><td>0.8697</td>
 </tr>
 <tr>
-<th>3</th><th>0.</th><th>0.</th>
+<th>motor</th><td>1116</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>4</th><th>nan</th><th>0.</th>
+<th>bus</th><td>2245</td><td>nan</td><td>0.</td>
 </tr>
 <tr>
-<th>5</th><th>nan</th><th>nan</th>
+<th>train</th><td>5</td><td>nan</td><td>nan</td>
 </tr>
 <tr>
-<th>6</th><th>0.</th><th>0.</th>
+<th>truck</th><td>829</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>7</th><th>0.7375</th><th>0.3082</th>
+<th>light</th><td>16198</td><td>0.7375</td><td>0.3082</td>
 </tr>
 <tr>
-<th>8</th><th>0.1067</th><th>0.0851</th>
+<th>hydrant</th><td>1095</td><td>0.1067</td><td>0.0851</td>
 </tr>
 <tr>
-<th>9</th><th>0.7864</th><th>0.2994</th>
+<th>sign</th><td>20770</td><td>0.7864</td><td>0.2994</td>
 </tr>
 <tr>
-<th>10</th><th>nan</th><th>nan</th>
+<th>dog</th><td>4</td><td>nan</td><td>nan</td>
 </tr>
 <tr>
-<th>11</th><th>0.</th><th>0.</th>
+<th>skateboard</th><td>29</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>12</th><th>nan</th><th>0.</th>
+<th>stroller</th><td>15</td><td>nan</td><td>0.</td>
 </tr>
 <tr>
-<th>13</th><th>nan</th><th>nan</th>
+<th>scooter</th><td>15</td><td>nan</td><td>nan</td>
 </tr>
 <tr>
-<th>14</th><th>0.</th><th>0.</th>
+<th>other vehicle</th><td>1373</td><td>0.</td><td>0.</td>
 </tr>
 </table>
 
