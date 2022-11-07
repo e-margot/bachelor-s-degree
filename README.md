@@ -193,4 +193,6 @@
 <th>other vehicle</th><td>1373</td><td>0.</td><td>0.</td>
 </tr>
 </table>
-
+## Confusion matrix
+<img src="/conf_matrix1.png" alt="conf_matrix"/>
+<img src="/conf_matrix2.png" alt="conf_matrix"/>
