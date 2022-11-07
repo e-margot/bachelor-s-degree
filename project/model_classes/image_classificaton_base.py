@@ -13,8 +13,12 @@ class ImageClassificationBase(nn.Module):
         out = self(images)  # Generate predictions
         loss = F.cross_entropy(out, labels)  # Calculate loss
         return loss
+    
+    def __init__(self):
+        super().__init__()
+        nb_classes = 15
+        self.matrix = torch.zeros(nb_classes, nb_classes)
 
-    # rewrite
     def validation_step(self, batch):
         images, labels = batch
         out = self(images)  # Generate predictions
@@ -22,10 +26,11 @@ class ImageClassificationBase(nn.Module):
         loss = F.cross_entropy(out, temp_labels)  # Calculate loss
         acc = accuracy(out, labels)  # Calculate accuracy
         conf_matrix = confusion_matrix(out, labels)  # create beautiful maps.... maybe
-        plot_confusion(conf_matrix)
+        self.matrix += conf_matrix
         return {'val_loss': loss.detach(), 'val_acc': acc}
 
     def validation_epoch_end(self, outputs):
+        plot_confusion(self.matrix)
         batch_losses = [x['val_loss'] for x in outputs]
         epoch_loss = torch.stack(batch_losses).mean()  # Combine losses
         batch_accs = [x['val_acc'] for x in outputs]
