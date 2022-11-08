@@ -195,8 +195,25 @@
 </table>
 
 ## Confusion matrix
-<img src="/conf_matrix1.png" alt="conf_matrix"/>
-<img src="/conf_matrix2.png" alt="conf_matrix"/>
+
+<table>
+<tr>
+   <th colspan="2">Predicted classes</th>
+</tr>
+<tr>
+<th>True classes</th><th><img src="/conf_matrix1.png" alt="conf_matrix"/></th>
+</tr>
+</table>
+<br><br>
+<table>
+<tr>
+<th colspan="2">Predicted classes</th>
+</tr>
+<tr>
+<th>True classes</th><th><img src="/conf_matrix2.png" alt="conf_matrix"/></th>
+</tr>
+</table>
+
 Из данных матрицы видно, что модель очень часто делает неправильную квалификацию в сторону самого крупного класса. Данная проблема требует комплексного решения, среди которых:
 
 1. балансировка классов в процессе обучения.   
