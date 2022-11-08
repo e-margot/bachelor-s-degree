@@ -160,10 +160,10 @@
 <th>motor</th><td>1116</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>bus</th><td>2245</td><td>nan</td><td>0.</td>
+<th>bus</th><td>2245</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>train</th><td>5</td><td>nan</td><td>nan</td>
+<th>train</th><td>5</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
 <th>truck</th><td>829</td><td>0.</td><td>0.</td>
@@ -178,16 +178,16 @@
 <th>sign</th><td>20770</td><td>0.7864</td><td>0.2994</td>
 </tr>
 <tr>
-<th>dog</th><td>4</td><td>nan</td><td>nan</td>
+<th>dog</th><td>4</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
 <th>skateboard</th><td>29</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>stroller</th><td>15</td><td>nan</td><td>0.</td>
+<th>stroller</th><td>15</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
-<th>scooter</th><td>15</td><td>nan</td><td>nan</td>
+<th>scooter</th><td>15</td><td>0.</td><td>0.</td>
 </tr>
 <tr>
 <th>other vehicle</th><td>1373</td><td>0.</td><td>0.</td>
@@ -197,3 +197,10 @@
 ## Confusion matrix
 <img src="/conf_matrix1.png" alt="conf_matrix"/>
 <img src="/conf_matrix2.png" alt="conf_matrix"/>
+Из данных матрицы видно, что модель очень часто делает неправильную квалификацию в сторону самого крупного класса. Данная проблема требует комплексного решения, среди которых:
+
+1. балансировка классов в процессе обучения.   
+
+2. аугментации для меньших  классов.   
+
+3. балансировка с помощью loss функции.   
