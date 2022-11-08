@@ -59,18 +59,23 @@ def confusion_matrix(outputs, labels):
 
 
 def plot_confusion(conf_matrix):
-    fig, ax = plt.subplots(1, 2, figsize=(17, 7))
-    ax[0] = sns.heatmap(conf_matrix, annot=True, linewidths=.5,
+    fig, ax = plt.subplots(1, 2, figsize=(50, 20))
+    # fig, ax = plt.subplots(1, 2)
+    sns.set(rc={'figure.figsize': (600, 600)})
+    ax[0] = sns.heatmap(conf_matrix, annot=True, linewidths=0.5,
                         ax=ax[0])
-    print("accuracy:", np.sum(np.diag(conf_matrix)) / np.sum(conf_matrix))
-    fig.show()
-
-    cmn = conf_matrix.astype('float') / conf_matrix.sum(axis=1)[:, np.newaxis]
+    print("accuracy:", torch.sum(torch.tensor(np.diag(conf_matrix))) / torch.sum(conf_matrix))
+    # fig.show()
+    # fig.savefig('conf.png')
+    cm = np.copy(conf_matrix)
+    cmn = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     ax[1] = sns.heatmap(cmn, annot=True, linewidths=.5,
                         ax=ax[1])
-    fig.show()
+    # fig.show()
+    fig.savefig('conf2.png')
 
     tp = np.diag(conf_matrix)
-    prec = list(map(truediv, tp, np.sum(conf_matrix, axis=0)))
-    rec = list(map(truediv, tp, np.sum(conf_matrix, axis=1)))
+    prec = list(map(truediv, tp, torch.sum(conf_matrix, dim=0)))
+    rec = list(map(truediv, tp, torch.sum(conf_matrix, dim=1)))
+    # print(prec)
     print('Precision: {}\nRecall: {}'.format(prec, rec))
