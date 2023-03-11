@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch
 
+import config
+
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -52,7 +54,7 @@ def _make_layer(block, inplanes, planes, blocks, stride=1):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=15):
+    def __init__(self, block, layers, num_classes=config.NUM_CLS):
         super().__init__()
 
         self.inplanes = 64

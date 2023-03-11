@@ -5,6 +5,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from operator import truediv
+from loguru import logger
+import config
 
 
 class ImageClassificationBase(nn.Module):
@@ -16,7 +18,7 @@ class ImageClassificationBase(nn.Module):
     
     def __init__(self):
         super().__init__()
-        nb_classes = 15
+        nb_classes = config.NUM_CLS
         self.matrix = torch.zeros(nb_classes, nb_classes)
 
     def validation_step(self, batch):
@@ -49,7 +51,7 @@ def accuracy(outputs, labels):
 
 
 def confusion_matrix(outputs, labels):
-    nb_classes = 15
+    nb_classes = config.NUM_CLS
     matrix = torch.zeros(nb_classes, nb_classes)
     _, preds = torch.max(outputs, dim=1)
     _, targs = torch.max(labels, dim=1)
@@ -59,19 +61,29 @@ def confusion_matrix(outputs, labels):
 
 
 def plot_confusion(conf_matrix):
-    fig, ax = plt.subplots(1, 2, figsize=(50, 20))
+    fig, ax = plt.subplots(1, 2, figsize=(15, 6))
     sns.set(rc={'figure.figsize': (600, 600)})
     ax[0] = sns.heatmap(conf_matrix, annot=True, linewidths=0.5,
                         ax=ax[0])
+    plt.xlabel('Predicted classes')
+    plt.ylabel('True classes')
+    logger.info('accuracy: {}'.format(torch.sum(torch.tensor(np.diag(conf_matrix))) / torch.sum(conf_matrix)))
     print("accuracy:", torch.sum(torch.tensor(np.diag(conf_matrix))) / torch.sum(conf_matrix))
     cm = np.copy(conf_matrix)
     cmn = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     ax[1] = sns.heatmap(cmn, annot=True, linewidths=.5,
                         ax=ax[1])
-    fig.savefig('conf2.png')
+    plt.xlabel('Predicted classes')
+    plt.ylabel('True classes')
+    fig.savefig('Conf_matrix/conf_aug_rot.png')
 
     tp = np.diag(conf_matrix)
     prec = list(map(truediv, tp, torch.sum(conf_matrix, dim=0)))
     rec = list(map(truediv, tp, torch.sum(conf_matrix, dim=1)))
-    # print(prec)
-    print('Precision: {}\nRecall: {}'.format(prec, rec))
+    tp2 = list(np.multiply(prec, rec))
+    s = [i + j for i, j in zip(prec, rec)]
+    tp2 = [2 * i for i in tp2]
+    f1 = list(map(truediv, tp2, s))
+    f1_macro = sum(f1) / config.NUM_CLS
+    print('Precision: {}\nRecall: {}\nF1 score: {}\nF1-macro: {}'.format(prec, rec, f1, f1_macro))
+    logger.info('Precision: {}\nRecall: {}\nF1 score: {}\nF1-macro: {}'.format(prec, rec, f1, f1_macro))

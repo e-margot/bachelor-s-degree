@@ -1,5 +1,6 @@
-from project.model_classes.image_classificaton_base import ImageClassificationBase
-from project.model_classes.resnet import ResNet, BasicBlock
+import config
+from model_classes.image_classificaton_base import ImageClassificationBase
+from model_classes.resnet import ResNet, BasicBlock
 import torch.nn as nn
 """# Override Resnet34
 https://www.kaggle.com/code/poonaml/building-resnet34-from-scratch-using-pytorch/notebook
@@ -17,7 +18,7 @@ class FLIR80Resnet(ImageClassificationBase):
         super().__init__()
         self.network = resnet34()
         num_ftrs = self.network.fc.in_features
-        self.network.fc = nn.Linear(num_ftrs, 15)
+        self.network.fc = nn.Linear(num_ftrs, config.NUM_CLS)
 
     def forward(self, xb):
         return self.network(xb)

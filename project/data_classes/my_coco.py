@@ -5,6 +5,7 @@ import sys
 import time
 import numpy as np
 from collections import defaultdict
+import config
 
 PYTHON_VERSION = sys.version_info[0]
 if PYTHON_VERSION == 2:
@@ -135,8 +136,9 @@ class MyCOCO:
         return list(ids)
 
     def cls(self, ids=[]):
-         target = [0] * 15
-        data = [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 17, 37, 73, 75, 79]
+        n_cls = config.NUM_CLS
+        target = [0] * n_cls
+        data = [1, 3, 10, 12]
         a = ([self.anns[id]['category_id'] for id in ids])
         target[data.index(a[0])] = 1
         return target

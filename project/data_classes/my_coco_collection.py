@@ -5,7 +5,7 @@ from typing import Any, Callable, Optional, Tuple, List
 import torchvision
 from PIL import Image
 import torch
-from my_coco import MyCOCO
+from data_classes.my_coco import MyCOCO
 
 
 class MyCocoDetection(VisionDataset):
