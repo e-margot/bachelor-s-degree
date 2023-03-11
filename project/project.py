@@ -168,11 +168,11 @@ if __name__ == "__main__":
     epoch = args.epoch
 
     training_cycles = {
-        1: [epoch, 1e-3, model, train_dl, valid_dl, 5e-4, opt_func],
-        2: [epoch, 1e-5, model, train_dl, valid_dl, 5e-4, opt_func],
+        1: [epoch, 1e-2, model, train_dl, valid_dl, 5e-4, opt_func],
+        2: [epoch, 1e-3, model, train_dl, valid_dl, 5e-4, opt_func],
         3: [epoch, 1e-4, model, train_dl, valid_dl, 5e-4, opt_func],
-        4: [epoch, 1e-2, model, train_dl, valid_dl, 5e-4, opt_func],
-        5: [epoch, 1e-5, model, train_dl, valid_dl, 5e-4, opt_func]
+        4: [epoch, 1e-5, model, train_dl, valid_dl, 5e-4, opt_func],
+        5: [epoch, 1e-6, model, train_dl, valid_dl, 5e-4, opt_func]
     }
 
     INDEX = config.RUN_RULE_SET
